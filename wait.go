@@ -163,32 +163,6 @@ func (s SendKeys) dmec(wes []selenium.WebElement, err error) (bool, error) {
 	}
 	return false, err
 }
-func (s SendKeys) dme(wes []selenium.WebElement, err error) (bool, error) {
-	if err != nil {
-		return nse(false, err)
-	}
-	for _, v := range wes {
-		ok, err := v.IsDisplayed()
-		if !ok || err != nil {
-			continue
-		}
-		err = v.MoveTo(0, 0)
-		if err != nil {
-			continue
-		}
-		time.Sleep(selenium.DefaultWaitInterval)
-		ok, err = v.IsEnabled()
-		if !ok || err != nil {
-			continue
-		}
-		err = v.SendKeys(string(s))
-		if err != nil {
-			continue
-		}
-		return true, err
-	}
-	return false, err
-}
 
 type HasSuffix string
 

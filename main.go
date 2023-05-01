@@ -56,11 +56,11 @@ func main() {
 		return
 	}
 	defer service.Stop()
-	err = loader()
+	conf, err = loader(s2p(cd, goSSjson))
 	if err != nil {
-		stdo.Println(err)
-		saver()
-		closer.Close()
+		conf.saver()
+		stdo.Println()
+		return
 	}
 	go func() {
 		err = s01(1)
@@ -123,10 +123,8 @@ func main() {
 			closer.Close()
 		}
 	}()
-	if debug == 98 {
-		time.Sleep(time.Second) //for wg.Add
-	}
-	err = s99(99) //ss
+	time.Sleep(time.Second) //for wg.Add
+	err = s99(99)           //ss
 	if err != nil {
 		stdo.Println(err)
 	}

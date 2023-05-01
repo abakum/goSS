@@ -20,11 +20,9 @@ func s08(slide int) (err error) {
 	wg.Add(1)
 	defer wg.Done()
 	var (
-		url        = conf.R08.Url
-		user       = conf.R08.User
-		pass       = conf.R08.Pass
-		wes        []selenium.WebElement
-		TaskClosed = "TaskClosed.xlsx"
+		url, user, pass = conf.R08.read()
+		wes             []selenium.WebElement
+		TaskClosed      = "TaskClosed.xlsx"
 	)
 	TaskClosed = s2p(root, doc, TaskClosed)
 

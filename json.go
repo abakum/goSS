@@ -14,11 +14,22 @@ type uup struct {
 	User,
 	Pass string
 }
+
+func (u uup) read() (string, string, string) {
+	return u.Url, u.User, u.Pass
+}
+
 type tc struct {
 	Token string
 	Chat  int64
 }
+
+func (t tc) read() (string, int64) {
+	return t.Token, t.Chat
+}
+
 type config struct {
+	fn  string
 	R01 string
 	R04 string
 	R05 string
@@ -31,39 +42,35 @@ type config struct {
 }
 
 var (
-	conf = config{}
+	conf *config
 )
 
-func loader() (err error) {
-	bytes, err := os.ReadFile(s2p(cd, goSSjson))
+func loader(fn string) (conf *config, err error) {
+	obj := config{fn: fn}
+	conf = &obj
+	bytes, err := os.ReadFile(fn)
 	if err != nil {
 		stdo.Println("loader")
 		return
 	}
-	err = json.Unmarshal(bytes, &conf)
+	err = json.Unmarshal(bytes, conf)
 	if err != nil {
 		stdo.Println("loader")
 		return
 	}
 	stdo.Println("loader done")
-	stdo.Println(conf)
+	stdo.Println(obj.Ids)
 	return
 }
 
-func saver() (err error) {
-	stdo.Println(conf)
+func (conf *config) saver() (err error) {
+	stdo.Println(conf.Ids)
 	bytes, err := json.Marshal(conf)
 	if err != nil {
 		stdo.Println("saver")
 		return
 	}
-	out, err := os.Create(s2p(cd, goSSjson))
-	if err != nil {
-		stdo.Println("saver")
-		return
-	}
-	defer out.Close()
-	_, err = out.Write(bytes)
+	err = os.WriteFile(conf.fn, bytes, 0644)
 	if err != nil {
 		stdo.Println("saver")
 		return

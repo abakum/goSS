@@ -19,10 +19,8 @@ func s99(slide int) (err error) {
 		}
 	}
 	var (
-		url  = conf.R99.Url
-		user = conf.R99.User
-		pass = conf.R99.Pass
-		we   selenium.WebElement
+		url, user, pass = conf.R99.read()
+		we              selenium.WebElement
 	)
 	sCaps := selenium.Capabilities{
 		"browserName": "chrome",

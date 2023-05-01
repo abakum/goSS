@@ -19,22 +19,15 @@ func s98(slide int) (err error) {
 	wg.Add(1)
 	defer wg.Done()
 	var (
-		bot      *telego.Bot
-		me       *telego.User
-		token    = conf.R98.Token
-		chat     = conf.R98.Chat
-		file     *os.File
-		fn       string
-		medias   []telego.InputMedia
-		messages []telego.Message
+		bot         *telego.Bot
+		token, chat = conf.R98.read()
+		file        *os.File
+		medias      []telego.InputMedia
+		messages    []telego.Message
 	)
 	inds := []int{1, 4, 5, 8, 12, 13, 97}
 	for _, v := range inds {
-		fn = fmt.Sprintf("%02d.jpg", v)
-		if v == 97 {
-			fn = mov
-		}
-		if _, err = os.Stat(s2p(root, fn)); errors.Is(err, os.ErrNotExist) {
+		if _, err = os.Stat(i2p(v)); errors.Is(err, os.ErrNotExist) {
 			stdo.Println()
 			return
 		}
@@ -45,19 +38,9 @@ func s98(slide int) (err error) {
 		return
 	}
 	defer bot.Close()
-	me, err = bot.GetMe()
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	stdo.Println(me)
 	medias = []telego.InputMedia{}
 	for _, v := range inds {
-		fn = fmt.Sprintf("%02d.jpg", v)
-		if v == 97 {
-			fn = mov
-		}
-		file, err = os.Open(s2p(root, fn))
+		file, err = os.Open(i2p(v))
 		if err != nil {
 			stdo.Println()
 			return
@@ -72,12 +55,6 @@ func s98(slide int) (err error) {
 			medias = append(medias, tu.MediaPhoto(tu.File(file)))
 		}
 	}
-	for _, v := range conf.Ids {
-		if v == 0 {
-			continue
-		}
-		bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: tu.ID(chat), MessageID: v})
-	}
 	messages, err = bot.SendMediaGroup(tu.MediaGroup(tu.ID(chat)).WithMedia(medias...))
 	if len(messages) != len(medias) {
 		for _, v := range messages {
@@ -86,14 +63,29 @@ func s98(slide int) (err error) {
 		stdo.Println()
 		return
 	}
+	for _, v := range conf.Ids {
+		if v == 0 {
+			continue
+		}
+		bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: tu.ID(chat), MessageID: v})
+	}
 	conf.Ids = []int{}
 	for _, v := range messages {
 		conf.Ids = append(conf.Ids, v.MessageID)
 	}
-	err = saver()
+	err = conf.saver()
 	if err != nil {
 		stdo.Println()
 		return
 	}
+	return
+}
+
+func i2p(v int) (fn string) {
+	fn = fmt.Sprintf("%02d.jpg", v)
+	if v == 97 {
+		fn = mov
+	}
+	fn = s2p(root, fn)
 	return
 }
