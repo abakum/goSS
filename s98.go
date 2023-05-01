@@ -35,19 +35,19 @@ func s98(slide int) (err error) {
 			fn = mov
 		}
 		if _, err = os.Stat(s2p(root, fn)); errors.Is(err, os.ErrNotExist) {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	}
 	bot, err = telego.NewBot(token, telego.WithDefaultDebugLogger())
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer bot.Close()
 	me, err = bot.GetMe()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	stdo.Println(me)
@@ -59,7 +59,7 @@ func s98(slide int) (err error) {
 		}
 		file, err = os.Open(s2p(root, fn))
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		defer file.Close()
@@ -83,7 +83,7 @@ func s98(slide int) (err error) {
 		for _, v := range messages {
 			bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: tu.ID(chat), MessageID: v.MessageID})
 		}
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	conf.Ids = []int{}
@@ -92,7 +92,7 @@ func s98(slide int) (err error) {
 	}
 	err = saver()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	return

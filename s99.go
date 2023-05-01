@@ -49,7 +49,7 @@ func s99(slide int) (err error) {
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer close(wd)
@@ -58,7 +58,7 @@ func s99(slide int) (err error) {
 	}
 	err = wd.Get(url)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	wdShow(wd)
@@ -67,7 +67,7 @@ func s99(slide int) (err error) {
 	}
 	currentURL, err := wd.CurrentURL()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if url != currentURL {
@@ -75,7 +75,7 @@ func s99(slide int) (err error) {
 			return SendKeys(user).mc(wd.FindElement(selenium.ByXPATH, "//input[@name='ar-user-name']"))
 		})
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		if debug == slide {
@@ -85,7 +85,7 @@ func s99(slide int) (err error) {
 			return weMC(wd.FindElement(selenium.ByXPATH, "//button[@type='submit']"))
 		}, time.Second*30)
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		if debug == slide {
@@ -95,7 +95,7 @@ func s99(slide int) (err error) {
 			return SendKeys(pass).mc(wd.FindElement(selenium.ByXPATH, "//input[@name='ar-user-password']"))
 		})
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		if debug == slide {
@@ -105,7 +105,7 @@ func s99(slide int) (err error) {
 			return weMC(wd.FindElement(selenium.ByXPATH, "//button[@type='submit']"))
 		})
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		if debug == slide {
@@ -116,7 +116,7 @@ func s99(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".multiBtnInner_xbp:nth-child(1)"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -129,7 +129,7 @@ func s99(slide int) (err error) {
 	if err != nil {
 		timeout = strings.Contains(err.Error(), "timeout after")
 		if !timeout {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	}
@@ -138,7 +138,7 @@ func s99(slide int) (err error) {
 			return weMC(wd.FindElement(selenium.ByCSSSelector, ".align-left_-232488494:nth-child(3)")) // "//button[contains(.,'Удалить')]"
 		})
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		if debug == slide {
@@ -149,28 +149,28 @@ func s99(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".addFilesBtn_RvX"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//button[contains(.,'Файл')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return SendKeys(s2p(root, mov)).nse(wd.FindElement(selenium.ByXPATH, "//form/input"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'Загрузка')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	// exec.Command("taskkill","/fi","WINDOWTITLE eq Открытие").Run()
@@ -185,7 +185,7 @@ func s99(slide int) (err error) {
 	if err != nil {
 		_, err = nse(false, err)
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	}
@@ -198,7 +198,7 @@ func s99(slide int) (err error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'Загрузка завершена')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	saveWd(wd, "98.png")
@@ -206,7 +206,7 @@ func s99(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".preset-primary_-525226473 > svg"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	time.Sleep(time.Second * 3)
@@ -217,10 +217,10 @@ func s99(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".multiBtnInner_xbp:nth-child(4)"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	saveWd(wd, fmt.Sprintf("%02d.png", slide))
-	stdo.Printf("%d Done\n", slide)
+	stdo.Printf("%02d Done\n", slide)
 	return
 }

@@ -55,7 +55,7 @@ func s08(slide int) (err error) {
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer close(wd)
@@ -64,7 +64,7 @@ func s08(slide int) (err error) {
 	}
 	err = wd.Get(url)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	wdShow(wd)
@@ -75,14 +75,14 @@ func s08(slide int) (err error) {
 		return SendKeys(user).mc(wd.FindElement(selenium.ByXPATH, "//input[@id='login_form-username']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return SendKeys(pass).mc(wd.FindElement(selenium.ByXPATH, "//input[@id='login_form-password']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -92,7 +92,7 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'Войти')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -102,7 +102,7 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'По работникам и типу задачи')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -112,7 +112,7 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'месяцы')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -122,7 +122,7 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//ul[contains(@class,'ui-selectcheckboxmenu-multiple-container')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -132,7 +132,7 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//li[5]/label")) // //label[contains(.,'Обработка наряда')]
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -141,18 +141,18 @@ func s08(slide int) (err error) {
 	for i := 4; i < 9; i++ {
 		wes, err = wd.FindElements(selenium.ByXPATH, "//*[contains(@class,'ui-tree-toggler')]")
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		err = wes[i].MoveTo(0, 0)
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		time.Sleep(selenium.DefaultWaitInterval)
 		err = wes[i].Click()
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		time.Sleep(selenium.DefaultWaitInterval * 2)
@@ -162,14 +162,14 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'Группа инсталляций')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'Группа клиентского сервиса')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	saveWd(wd, fmt.Sprintf("%02d Группа клиентского сервиса.png", slide))
@@ -177,21 +177,21 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'ОК')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'Отображение фильтра')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//button[@id='report_actions_form-export_report_data']/span"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	os.Remove(TaskClosed)
@@ -199,11 +199,11 @@ func s08(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'EXCEL')]"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	saveWd(wd, fmt.Sprintf("%02d.png", slide))
 	time.Sleep(time.Second * 3)
-	stdo.Printf("0%d Done\n", slide)
+	stdo.Printf("%02d Done\n", slide)
 	return
 }

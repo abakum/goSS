@@ -37,12 +37,12 @@ var (
 func loader() (err error) {
 	bytes, err := os.ReadFile(s2p(cd, goSSjson))
 	if err != nil {
-		stdo.Println()
+		stdo.Println("loader")
 		return
 	}
 	err = json.Unmarshal(bytes, &conf)
 	if err != nil {
-		stdo.Println()
+		stdo.Println("loader")
 		return
 	}
 	stdo.Println("loader done")
@@ -54,18 +54,18 @@ func saver() (err error) {
 	stdo.Println(conf)
 	bytes, err := json.Marshal(conf)
 	if err != nil {
-		stdo.Println(err)
+		stdo.Println("saver")
 		return
 	}
 	out, err := os.Create(s2p(cd, goSSjson))
 	if err != nil {
-		stdo.Println("")
+		stdo.Println("saver")
 		return
 	}
 	defer out.Close()
 	_, err = out.Write(bytes)
 	if err != nil {
-		stdo.Println(err)
+		stdo.Println("saver")
 		return
 	}
 	stdo.Println("saver done")

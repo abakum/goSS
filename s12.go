@@ -46,7 +46,7 @@ func s12(slide int) (err error) {
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer close(wd)
@@ -55,7 +55,7 @@ func s12(slide int) (err error) {
 	}
 	err = getEmbed(wd, url)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	wdShow(wd)
@@ -66,7 +66,7 @@ func s12(slide int) (err error) {
 		return WebDriver{wd}.sf(wd.FindElement(selenium.ByXPATH, "//iframe"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -76,7 +76,7 @@ func s12(slide int) (err error) {
 		return Contains("Юг").nse(wd.FindElement(selenium.ByTagName, "body"))
 	}, time.Minute*3)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -86,7 +86,7 @@ func s12(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//div[@aria-label='Юг']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -96,7 +96,7 @@ func s12(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//*[text()='Все']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -106,7 +106,7 @@ func s12(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[@title='Ростовский']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -116,7 +116,7 @@ func s12(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//*[text()='Все']"))
 	}, time.Second*30)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -126,7 +126,7 @@ func s12(slide int) (err error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[@title='СЦ г.Миллерово']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if debug == slide {
@@ -137,11 +137,11 @@ func s12(slide int) (err error) {
 		return weNil(wd.FindElement(selenium.ByXPATH, "//*[@class='circle']"))
 	})
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	saveWd(wd, fmt.Sprintf("%02d.png", slide))
 	saveCropWd(wd, fmt.Sprintf("%02d.jpg", slide), image.Rect(336, 0, 1580, 740))
-	stdo.Printf("0%d Done\n", slide)
+	stdo.Printf("%02d Done\n", slide)
 	return
 }

@@ -17,7 +17,7 @@ func s97(slide int) (err error) {
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	return

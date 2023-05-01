@@ -40,13 +40,13 @@ func close(wd selenium.WebDriver) {
 
 func saveWe(we selenium.WebElement, fileName string) (err error) {
 	if we == nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	time.Sleep(time.Second)
 	pngBytes, err := we.Screenshot(true)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	fullName := s2p(root, doc, fileName)
@@ -55,7 +55,7 @@ func saveWe(we selenium.WebElement, fileName string) (err error) {
 	}
 	out, err := os.Create(fullName)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer out.Close()
@@ -63,18 +63,18 @@ func saveWe(we selenium.WebElement, fileName string) (err error) {
 		var img image.Image
 		img, err = png.Decode(bytes.NewReader(pngBytes))
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		err = jpeg.Encode(out, img, &jpeg.Options{Quality: 100})
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	} else {
 		_, err = out.Write(pngBytes)
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	}
@@ -86,13 +86,13 @@ func saveWe(we selenium.WebElement, fileName string) (err error) {
 }
 func saveWd(wd selenium.WebDriver, fileName string) (err error) {
 	if wd == nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	time.Sleep(time.Second)
 	pngBytes, err := wd.Screenshot()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	fullName := s2p(root, doc, fileName)
@@ -101,7 +101,7 @@ func saveWd(wd selenium.WebDriver, fileName string) (err error) {
 	}
 	out, err := os.Create(fullName)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer out.Close()
@@ -109,18 +109,18 @@ func saveWd(wd selenium.WebDriver, fileName string) (err error) {
 		var img image.Image
 		img, err = png.Decode(bytes.NewReader(pngBytes))
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 		err = jpeg.Encode(out, img, &jpeg.Options{Quality: 100})
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	} else {
 		_, err = out.Write(pngBytes)
 		if err != nil {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	}
@@ -147,13 +147,13 @@ func cropImage(img image.Image, crop image.Rectangle) (image.Image, error) {
 }
 func saveCropWd(wd selenium.WebDriver, fileName string, crop image.Rectangle) (err error) {
 	if wd == nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	time.Sleep(time.Second)
 	pngBytes, err := wd.Screenshot()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	fullName := s2p(root, doc, fileName)
@@ -162,19 +162,19 @@ func saveCropWd(wd selenium.WebDriver, fileName string, crop image.Rectangle) (e
 	}
 	out, err := os.Create(fullName)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	defer out.Close()
 	var oImg, img image.Image
 	oImg, err = png.Decode(bytes.NewReader(pngBytes))
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	img, err = cropImage(oImg, crop)
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	if strings.HasSuffix(fileName, ".jpg") {
@@ -183,7 +183,7 @@ func saveCropWd(wd selenium.WebDriver, fileName string, crop image.Rectangle) (e
 		err = png.Encode(out, img)
 	}
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", pJPG).Run()

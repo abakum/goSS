@@ -16,12 +16,12 @@ func s96(slide int) (err error) {
 	}
 	err = exec.Command("cmd", "/c", "start", s2p(cd, "imager.xlsb")).Run()
 	if err != nil {
-		stdo.Println("")
+		stdo.Println()
 		return
 	}
 	for _, v := range []int{2, 7, 8, 9} {
 		if _, err = os.Stat(s2p(root, fmt.Sprintf("%02d.jpg", v))); errors.Is(err, os.ErrNotExist) {
-			stdo.Println("")
+			stdo.Println()
 			return
 		}
 	}
