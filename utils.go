@@ -11,15 +11,23 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"syscall"
 	"time"
+	"unsafe"
 
 	"github.com/tebeka/selenium"
 	sl "github.com/tebeka/selenium/log"
+	"github.com/xlab/closer"
 )
 
-func close(wd selenium.WebDriver) {
+func wdQC(wd selenium.WebDriver, slide int) {
+	id := wd.SessionID()
+	if id == "" {
+		return
+	}
+	stdo.Printf("%02d wdQC %q\n", slide, id)
 	if debug > 0 {
 		for _, logType := range []sl.Type{sl.Server, sl.Performance} {
 			mess, err := wd.Log(sl.Type(logType))
@@ -260,13 +268,16 @@ func SendMessage(hWnd syscall.Handle, msg uint32, wParam, lParam uintptr) (err e
 	}
 	return
 }
-func wdShow(wd selenium.WebDriver) {
-	stdo.Println(wd.Title())
-	cu, err := wd.CurrentURL()
+
+func sErr(s string, err error) string {
 	if err != nil {
-		return
+		return err.Error()
 	}
-	stdo.Println(url.QueryUnescape(cu))
+	return s
+}
+func wdShow(wd selenium.WebDriver, slide int) {
+	stdo.Printf("%02d %q\n", slide, sErr(wd.Title()))
+	stdo.Printf("%02d %q\n", slide, sErr(url.QueryUnescape(sErr(wd.CurrentURL()))))
 }
 
 // like path.Join but better
@@ -276,4 +287,32 @@ func s2p(s ...string) string {
 		ss = append(ss, filepath.SplitList(strings.Trim(v, `\/`))...)
 	}
 	return filepath.FromSlash(path.Join(ss...))
+}
+
+func i2p(v int) (fn string) {
+	fn = fmt.Sprintf("%02d.jpg", v)
+	if v == 97 {
+		fn = mov
+	}
+	fn = s2p(root, fn)
+	return
+}
+
+func GetUnexportedField(field reflect.Value) interface{} {
+	return reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().Interface()
+}
+func SetUnexportedField(field reflect.Value, value interface{}) {
+	reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).
+		Elem().
+		Set(reflect.ValueOf(value))
+}
+
+func ex(slide int, err error) {
+	if err != nil {
+		exit = slide
+		stdo.Printf("%02d %q", slide, err)
+		closer.Close()
+	} else {
+		stdo.Printf("%02d Done", slide)
+	}
 }

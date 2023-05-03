@@ -10,22 +10,22 @@ import (
 	sl "github.com/tebeka/selenium/log"
 )
 
-func s08(slide int) (err error) {
+func s08(slide int) (ex int, err error) {
+	ex = slide
+	wg.Add(1)
+	defer wg.Done()
 	if debug != 0 {
 		if debug == slide || -debug == slide {
 		} else {
 			return
 		}
 	}
-	wg.Add(1)
-	defer wg.Done()
 	var (
 		url, user, pass = conf.R08.read()
 		wes             []selenium.WebElement
 		TaskClosed      = "TaskClosed.xlsx"
 	)
 	TaskClosed = s2p(root, doc, TaskClosed)
-
 	sCaps := selenium.Capabilities{
 		"browserName": "chrome",
 	}
@@ -56,7 +56,7 @@ func s08(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	defer close(wd)
+	csWD <- wd
 	if debug != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
@@ -65,7 +65,7 @@ func s08(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	wdShow(wd)
+	wdShow(wd, slide)
 	if debug == slide {
 		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
 	}
@@ -147,7 +147,7 @@ func s08(slide int) (err error) {
 			stdo.Println()
 			return
 		}
-		time.Sleep(selenium.DefaultWaitInterval)
+		time.Sleep(selenium.DefaultWaitInterval * 2)
 		err = wes[i].Click()
 		if err != nil {
 			stdo.Println()
@@ -201,7 +201,6 @@ func s08(slide int) (err error) {
 		return
 	}
 	saveWd(wd, fmt.Sprintf("%02d.png", slide))
-	time.Sleep(time.Second * 3)
-	stdo.Printf("%02d Done\n", slide)
+	time.Sleep(time.Second * 3) //for download
 	return
 }

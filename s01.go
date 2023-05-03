@@ -8,7 +8,10 @@ import (
 	sl "github.com/tebeka/selenium/log"
 )
 
-func s01(slide int) (err error) {
+func s01(slide int) (ex int, err error) {
+	ex = slide
+	wg.Add(1)
+	defer wg.Done()
 	if debug != 0 {
 		if debug == slide || -debug == slide {
 		} else {
@@ -19,8 +22,6 @@ func s01(slide int) (err error) {
 		url = conf.R01
 		we  selenium.WebElement
 	)
-	wg.Add(1)
-	defer wg.Done()
 	sCaps := selenium.Capabilities{
 		"browserName":      "chrome",
 		"pageLoadStrategy": "eager",
@@ -57,7 +58,7 @@ func s01(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	defer close(wd)
+	csWD <- wd
 	if debug != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
@@ -66,7 +67,7 @@ func s01(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	wdShow(wd)
+	wdShow(wd, slide)
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		we, err = wd.FindElement(selenium.ByXPATH, "//table[contains(@class,'weather')]")
 		return weNSE(we, err)
@@ -76,6 +77,5 @@ func s01(slide int) (err error) {
 		return
 	}
 	saveWe(we, fmt.Sprintf("%02d.jpg", slide))
-	stdo.Printf("0%d Done\n", slide)
 	return
 }

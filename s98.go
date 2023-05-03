@@ -2,22 +2,22 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/mymmrac/telego"
 	tu "github.com/mymmrac/telego/telegoutil"
 )
 
-func s98(slide int) (err error) {
+func s98(slide int) (ex int, err error) {
+	ex = slide
+	wg.Add(1)
+	defer wg.Done()
 	if debug != 0 {
 		if debug == slide || -debug == slide {
 		} else {
 			return
 		}
 	}
-	wg.Add(1)
-	defer wg.Done()
 	var (
 		bot         *telego.Bot
 		token, chat = conf.R98.read()
@@ -78,14 +78,5 @@ func s98(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	return
-}
-
-func i2p(v int) (fn string) {
-	fn = fmt.Sprintf("%02d.jpg", v)
-	if v == 97 {
-		fn = mov
-	}
-	fn = s2p(root, fn)
 	return
 }

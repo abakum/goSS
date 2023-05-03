@@ -5,7 +5,8 @@ import (
 	"os/exec"
 )
 
-func s97(slide int) (err error) {
+func s97(slide int) (ex int, err error) {
+	ex = slide
 	if debug != 0 {
 		if debug == slide || -debug == slide {
 		} else {

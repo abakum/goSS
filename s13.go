@@ -10,15 +10,16 @@ import (
 	sl "github.com/tebeka/selenium/log"
 )
 
-func s13(slide int) (err error) {
+func s13(slide int) (ex int, err error) {
+	ex = slide
+	wg.Add(1)
+	defer wg.Done()
 	if debug != 0 {
 		if debug == slide || -debug == slide {
 		} else {
 			return
 		}
 	}
-	wg.Add(1)
-	defer wg.Done()
 	var (
 		url = conf.R13
 	)
@@ -49,7 +50,7 @@ func s13(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	defer close(wd)
+	csWD <- wd
 	if debug != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
@@ -58,7 +59,7 @@ func s13(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	wdShow(wd)
+	wdShow(wd, slide)
 	if debug == slide {
 		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
 	}
@@ -160,8 +161,9 @@ func s13(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	saveWd(wd, fmt.Sprintf("%02d.png", slide))
+	if debug == slide {
+		saveWd(wd, fmt.Sprintf("%02d.png", slide))
+	}
 	saveCropWd(wd, fmt.Sprintf("%02d.jpg", slide), image.Rect(10, 10, 1880, 1006))
-	stdo.Printf("0%d Done\n", slide)
 	return
 }

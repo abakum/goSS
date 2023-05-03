@@ -10,15 +10,16 @@ import (
 	sl "github.com/tebeka/selenium/log"
 )
 
-func s05(slide int) (err error) {
+func s05(slide int) (ex int, err error) {
+	ex = slide
+	wg.Add(1)
+	defer wg.Done()
 	if debug != 0 {
 		if debug == slide || -debug == slide {
 		} else {
 			return
 		}
 	}
-	wg.Add(1)
-	defer wg.Done()
 	var (
 		url = conf.R05
 	)
@@ -49,7 +50,7 @@ func s05(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	defer close(wd)
+	csWD <- wd
 	if debug != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
@@ -58,7 +59,7 @@ func s05(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	wdShow(wd)
+	wdShow(wd, slide)
 	if debug == slide {
 		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
 	}
@@ -72,9 +73,9 @@ func s05(slide int) (err error) {
 	if debug == slide {
 		saveWd(wd, fmt.Sprintf("%02d iframe.png", slide))
 	}
-	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
+	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return HasSuffix("Время на все работы ЦЭ").nse(wd.FindElement(selenium.ByTagName, "body"))
-	})
+	}, time.Minute*3)
 	if err != nil {
 		stdo.Println()
 		return
@@ -100,9 +101,9 @@ func s05(slide int) (err error) {
 	if debug == slide {
 		saveWd(wd, fmt.Sprintf("%02d СЦ г.Миллерово.png", slide))
 	}
-	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
+	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'Ср. производительность сотрудника')]"))
-	})
+	}, time.Minute*3)
 	if err != nil {
 		stdo.Println()
 		return
@@ -117,8 +118,9 @@ func s05(slide int) (err error) {
 		stdo.Println()
 		return
 	}
-	saveWd(wd, fmt.Sprintf("%02d.png", slide))
+	if debug == slide {
+		saveWd(wd, fmt.Sprintf("%02d.png", slide))
+	}
 	saveCropWd(wd, fmt.Sprintf("%02d.jpg", slide), image.Rect(10, 10, 1888, 818)) //x7 y7 x3 y3
-	stdo.Printf("%02d Done\n", slide)
 	return
 }

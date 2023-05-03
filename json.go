@@ -70,7 +70,7 @@ func (conf *config) saver() (err error) {
 		stdo.Println("saver")
 		return
 	}
-	err = os.WriteFile(conf.fn, bytes, 0644)
+	err = os.WriteFile(conf.fn, bytes, 0o644)
 	if err != nil {
 		stdo.Println("saver")
 		return
