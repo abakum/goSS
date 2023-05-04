@@ -61,7 +61,7 @@ func s04(slide int) (ex int, err error) {
 	}
 	wdShow(wd, slide)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d get.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return WebDriver{wd}.sf(wd.FindElement(selenium.ByXPATH, "//iframe"))
@@ -71,7 +71,7 @@ func s04(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d iframe.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d iframe.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return HasSuffix("Целевые значения").nse(wd.FindElement(selenium.ByTagName, "body"))
@@ -81,7 +81,7 @@ func s04(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Целевые значения.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Целевые значения.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//div[contains(@title,'Главная')]"))
@@ -91,7 +91,7 @@ func s04(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Главная.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Главная.png", slide))
 	}
 	err = cb(wd, "СЦ", "СЦ г.Миллерово")
 	if err != nil {
@@ -99,7 +99,7 @@ func s04(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d СЦ г.Миллерово.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d СЦ г.Миллерово.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNil(wd.FindElement(selenium.ByXPATH, "//*[@class='circle']"))
@@ -109,7 +109,7 @@ func s04(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d circle.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d circle.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNil(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'ВЛГ')]"))
@@ -119,7 +119,7 @@ func s04(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d ВЛГ.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d ВЛГ.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNil(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'УРЛ')]"))
@@ -128,12 +128,14 @@ func s04(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
-
+	re := ssII(wd)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d.png", slide))
+		// ssII(wd).write(fmt.Sprintf("%02d.png", slide))
+		re.write(fmt.Sprintf("%02d.png", slide))
 	}
 	//saveCropWd(wd, fmt.Sprintf("%02d.jpg", slide), image.Rectangle{image.Pt(0, 0), image.Pt(1706, 812)})
-	saveCropWd(wd, fmt.Sprintf("%02d.jpg", slide), image.Rect(0, 0, 1706, 812)) //x7 y7 x3 y3
+	// ir(image.Rect(0, 0, 1706, 812)).crop(wd, fmt.Sprintf("%02d.jpg", slide)) //x7 y7 x3 y3
+	re.crop(image.Rect(0, 0, 1706, 812)).write(fmt.Sprintf("%02d.jpg", slide))
 	return
 }
 
@@ -146,7 +148,7 @@ func cb(wd selenium.WebDriver, key, value string) (err error) {
 		return
 	}
 	if debug > 0 {
-		saveWd(wd, fmt.Sprintf("%02d cb Click div.png", debug))
+		ssII(wd).write(fmt.Sprintf("%02d cb Click div.png", debug))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return SendKeys(value).dmec(wd.FindElements(selenium.ByXPATH, "//input[contains(@placeholder,'Поиск')]"))
@@ -156,7 +158,7 @@ func cb(wd selenium.WebDriver, key, value string) (err error) {
 		return
 	}
 	if debug > 0 {
-		saveWd(wd, fmt.Sprintf("%02d cb SendKeys.png", debug))
+		ssII(wd).write(fmt.Sprintf("%02d cb SendKeys.png", debug))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return wesDMEC(wd.FindElements(selenium.ByXPATH, fmt.Sprintf("//span[contains(text(),'%s')]", value)))
@@ -166,7 +168,7 @@ func cb(wd selenium.WebDriver, key, value string) (err error) {
 		return
 	}
 	if debug > 0 {
-		saveWd(wd, fmt.Sprintf("%02d cb Click span.png", debug))
+		ssII(wd).write(fmt.Sprintf("%02d cb Click span.png", debug))
 	}
 	wd.KeyDown(selenium.TabKey)
 	return

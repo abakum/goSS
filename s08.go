@@ -67,7 +67,7 @@ func s08(slide int) (ex int, err error) {
 	}
 	wdShow(wd, slide)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d get.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return SendKeys(user).mc(wd.FindElement(selenium.ByXPATH, "//input[@id='login_form-username']"))
@@ -84,7 +84,7 @@ func s08(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d login_form-password.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d login_form-password.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'Войти')]"))
@@ -94,7 +94,7 @@ func s08(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Войти.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Войти.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'По работникам и типу задачи')]"))
@@ -104,7 +104,7 @@ func s08(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d По работникам и типу задачи.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d По работникам и типу задачи.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'месяцы')]"))
@@ -114,7 +114,7 @@ func s08(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d месяцы.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d месяцы.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//ul[contains(@class,'ui-selectcheckboxmenu-multiple-container')]"))
@@ -124,7 +124,7 @@ func s08(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d ui-selectcheckboxmenu-multiple-container.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d ui-selectcheckboxmenu-multiple-container.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//li[5]/label")) // //label[contains(.,'Обработка наряда')]
@@ -134,7 +134,7 @@ func s08(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Обработка наряда.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Обработка наряда.png", slide))
 	}
 	for i := 4; i < 9; i++ {
 		wes, err = wd.FindElements(selenium.ByXPATH, "//*[contains(@class,'ui-tree-toggler')]")
@@ -170,7 +170,7 @@ func s08(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
-	saveWd(wd, fmt.Sprintf("%02d Группа клиентского сервиса.png", slide))
+	ssII(wd).write(fmt.Sprintf("%02d Группа клиентского сервиса.png", slide))
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'ОК')]"))
 	})
@@ -200,7 +200,7 @@ func s08(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
-	saveWd(wd, fmt.Sprintf("%02d.png", slide))
+	ssII(wd).write(fmt.Sprintf("%02d.png", slide))
 	time.Sleep(time.Second * 3) //for download
 	return
 }

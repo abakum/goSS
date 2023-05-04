@@ -64,7 +64,7 @@ func s99(slide int) (ex int, err error) {
 	}
 	wdShow(wd, slide)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d get.png", slide))
 	}
 	currentURL, err := wd.CurrentURL()
 	if err != nil {
@@ -80,7 +80,7 @@ func s99(slide int) (ex int, err error) {
 			return
 		}
 		if debug == slide {
-			saveWd(wd, fmt.Sprintf("%02d ar-user-name.png", slide))
+			ssII(wd).write(fmt.Sprintf("%02d ar-user-name.png", slide))
 		}
 		err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 			return weMC(wd.FindElement(selenium.ByXPATH, "//button[@type='submit']"))
@@ -90,7 +90,7 @@ func s99(slide int) (ex int, err error) {
 			return
 		}
 		if debug == slide {
-			saveWd(wd, fmt.Sprintf("%02d submit_login.png", slide))
+			ssII(wd).write(fmt.Sprintf("%02d submit_login.png", slide))
 		}
 		err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 			return SendKeys(pass).mc(wd.FindElement(selenium.ByXPATH, "//input[@name='ar-user-password']"))
@@ -100,7 +100,7 @@ func s99(slide int) (ex int, err error) {
 			return
 		}
 		if debug == slide {
-			saveWd(wd, fmt.Sprintf("%02d ar-user-password.png", slide))
+			ssII(wd).write(fmt.Sprintf("%02d ar-user-password.png", slide))
 		}
 		err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 			return weMC(wd.FindElement(selenium.ByXPATH, "//button[@type='submit']"))
@@ -110,7 +110,7 @@ func s99(slide int) (ex int, err error) {
 			return
 		}
 		if debug == slide {
-			saveWd(wd, fmt.Sprintf("%02d submit_password.png", slide))
+			ssII(wd).write(fmt.Sprintf("%02d submit_password.png", slide))
 		}
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
@@ -121,7 +121,7 @@ func s99(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Редактировать.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Редактировать.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".menu-button_J9B > svg"))
@@ -143,7 +143,7 @@ func s99(slide int) (ex int, err error) {
 			return
 		}
 		if debug == slide {
-			saveWd(wd, fmt.Sprintf("%02d Удалить.png", slide))
+			ssII(wd).write(fmt.Sprintf("%02d Удалить.png", slide))
 		}
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
@@ -180,7 +180,7 @@ func s99(slide int) (ex int, err error) {
 		stdo.Println(err)
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Загрузка.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Загрузка.png", slide))
 	}
 	we, err = wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'Загрузка отменена')]")
 	if err != nil {
@@ -191,7 +191,7 @@ func s99(slide int) (ex int, err error) {
 		}
 	}
 	if we != nil {
-		saveWd(wd, "99 Загрузка отменена.png")
+		ssII(wd).write("99 Загрузка отменена.png")
 		err = fmt.Errorf("загрузка отменена")
 		return
 	}
@@ -202,7 +202,7 @@ func s99(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
-	saveWd(wd, "98.png")
+	ssII(wd).write("98.png")
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".preset-primary_-525226473 > svg"))
 	})
@@ -212,7 +212,7 @@ func s99(slide int) (ex int, err error) {
 	}
 	time.Sleep(time.Second * 3)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Закрыть Загрузка завершена.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Закрыть Загрузка завершена.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByCSSSelector, ".multiBtnInner_xbp:nth-child(4)"))
@@ -221,7 +221,7 @@ func s99(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
-	saveWd(wd, fmt.Sprintf("%02d.png", slide))
+	ssII(wd).write(fmt.Sprintf("%02d.png", slide))
 	stdo.Printf("%02d Done\n", slide)
 	return
 }

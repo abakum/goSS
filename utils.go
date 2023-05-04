@@ -46,161 +46,6 @@ func wdQC(wd selenium.WebDriver, slide int) {
 	wd.Close() //for kill chromeDriver.exe
 }
 
-func saveWe(we selenium.WebElement, fileName string) (err error) {
-	if we == nil {
-		stdo.Println()
-		return
-	}
-	time.Sleep(time.Second)
-	pngBytes, err := we.Screenshot(true)
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	fullName := s2p(root, doc, fileName)
-	if strings.HasSuffix(fileName, ".jpg") {
-		fullName = filepath.Join(root, fileName)
-	}
-	out, err := os.Create(fullName)
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	defer out.Close()
-	if strings.HasSuffix(fileName, ".jpg") {
-		var img image.Image
-		img, err = png.Decode(bytes.NewReader(pngBytes))
-		if err != nil {
-			stdo.Println()
-			return
-		}
-		err = jpeg.Encode(out, img, &jpeg.Options{Quality: 100})
-		if err != nil {
-			stdo.Println()
-			return
-		}
-	} else {
-		_, err = out.Write(pngBytes)
-		if err != nil {
-			stdo.Println()
-			return
-		}
-	}
-	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", pJPG).Run()
-	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", pJPG).Run()
-	// err = exec.Command("cmd", "/c", "start", "chrome", pJPG).Run()
-	err = exec.Command(chromeBin, fullName).Run()
-	return
-}
-func saveWd(wd selenium.WebDriver, fileName string) (err error) {
-	if wd == nil {
-		stdo.Println()
-		return
-	}
-	time.Sleep(time.Second)
-	pngBytes, err := wd.Screenshot()
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	fullName := s2p(root, doc, fileName)
-	if strings.HasSuffix(fileName, ".jpg") {
-		fullName = filepath.Join(root, fileName)
-	}
-	out, err := os.Create(fullName)
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	defer out.Close()
-	if strings.HasSuffix(fileName, ".jpg") {
-		var img image.Image
-		img, err = png.Decode(bytes.NewReader(pngBytes))
-		if err != nil {
-			stdo.Println()
-			return
-		}
-		err = jpeg.Encode(out, img, &jpeg.Options{Quality: 100})
-		if err != nil {
-			stdo.Println()
-			return
-		}
-	} else {
-		_, err = out.Write(pngBytes)
-		if err != nil {
-			stdo.Println()
-			return
-		}
-	}
-	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", pJPG).Run()
-	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", pJPG).Run()
-	// err = exec.Command("cmd", "/c", "start", "chrome", pJPG).Run()
-	err = exec.Command(chromeBin, fullName).Run()
-	return
-}
-func cropImage(img image.Image, crop image.Rectangle) (image.Image, error) {
-	type subImager interface {
-		SubImage(r image.Rectangle) image.Image
-	}
-
-	// img is an Image interface. This checks if the underlying value has a
-	// method called SubImage. If it does, then we can use SubImage to crop the
-	// image.
-	simg, ok := img.(subImager)
-	if !ok {
-		return nil, fmt.Errorf("image does not support cropping")
-	}
-
-	return simg.SubImage(crop), nil
-}
-func saveCropWd(wd selenium.WebDriver, fileName string, crop image.Rectangle) (err error) {
-	if wd == nil {
-		stdo.Println()
-		return
-	}
-	time.Sleep(time.Second)
-	pngBytes, err := wd.Screenshot()
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	fullName := s2p(root, doc, fileName)
-	if strings.HasSuffix(fileName, ".jpg") {
-		fullName = filepath.Join(root, fileName)
-	}
-	out, err := os.Create(fullName)
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	defer out.Close()
-	var oImg, img image.Image
-	oImg, err = png.Decode(bytes.NewReader(pngBytes))
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	img, err = cropImage(oImg, crop)
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	if strings.HasSuffix(fileName, ".jpg") {
-		err = jpeg.Encode(out, img, &jpeg.Options{Quality: 100})
-	} else {
-		err = png.Encode(out, img)
-	}
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", pJPG).Run()
-	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", pJPG).Run()
-	// err = exec.Command("cmd", "/c", "start", "chrome", pJPG).Run()
-	err = exec.Command(chromeBin, fullName).Run()
-	return
-}
-
 func weShow(we selenium.WebElement, err error) {
 	if err != nil || we == nil || debug < 1 {
 		return
@@ -315,4 +160,91 @@ func ex(slide int, err error) {
 	} else {
 		stdo.Printf("%02d Done", slide)
 	}
+}
+
+type ii struct {
+	img image.Image
+	err error
+}
+
+func ssII(wd any) (r *ii) {
+	var pngBytes []byte
+	r = &ii{}
+	if wd == nil {
+		stdo.Println("ssII")
+		r.err = fmt.Errorf("empty img")
+		return
+	}
+	time.Sleep(time.Second)
+	switch wx := wd.(type) {
+	case selenium.WebDriver:
+		pngBytes, r.err = wx.Screenshot()
+	case selenium.WebElement:
+		pngBytes, r.err = wx.Screenshot(true)
+	default:
+		r.err = fmt.Errorf("not selenium.WebX")
+	}
+	if r.err != nil {
+		stdo.Println("ssII")
+		return
+	}
+	r.img, r.err = png.Decode(bytes.NewReader(pngBytes))
+	if r.err != nil {
+		stdo.Println("ssII")
+	}
+	return
+}
+
+func (i *ii) crop(crop image.Rectangle) (r *ii) {
+	r = i
+	if i.err != nil {
+		return
+	}
+	// r = &ii{}
+	// r.img, r.err = cropImage(i.img, crop)
+	type subImager interface {
+		SubImage(ir image.Rectangle) image.Image
+	}
+	// img is an Image interface. This checks if the underlying value has a
+	// method called SubImage. If it does, then we can use SubImage to crop the
+	// image.
+	sImg, ok := i.img.(subImager)
+	if !ok {
+		stdo.Println("crop")
+		r.err = fmt.Errorf("image does not support cropping")
+		return
+	}
+	r.img = sImg.SubImage(crop)
+	return
+}
+
+func (i *ii) write(fileName string) (err error) {
+	err = i.err
+	if err != nil {
+		return
+	}
+	fullName := s2p(root, doc, fileName)
+	if strings.HasSuffix(fileName, ".jpg") {
+		fullName = filepath.Join(root, fileName)
+	}
+	out, err := os.Create(fullName)
+	if err != nil {
+		stdo.Println("write")
+		return
+	}
+	defer out.Close()
+	if strings.HasSuffix(fileName, ".jpg") {
+		err = jpeg.Encode(out, i.img, &jpeg.Options{Quality: 100})
+	} else {
+		err = png.Encode(out, i.img)
+	}
+	if err != nil {
+		stdo.Println("write")
+		return
+	}
+	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", pJPG).Run()
+	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", pJPG).Run()
+	// err = exec.Command("cmd", "/c", "start", "chrome", pJPG).Run()
+	err = exec.Command(chromeBin, fullName).Run()
+	return
 }

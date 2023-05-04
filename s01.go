@@ -76,6 +76,7 @@ func s01(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
-	saveWe(we, fmt.Sprintf("%02d.jpg", slide))
+	// zr.crop(we, fmt.Sprintf("%02d.jpg", slide))
+	ssII(we).write(fmt.Sprintf("%02d.jpg", slide))
 	return
 }

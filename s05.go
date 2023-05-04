@@ -61,7 +61,7 @@ func s05(slide int) (ex int, err error) {
 	}
 	wdShow(wd, slide)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d get.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d get.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return WebDriver{wd}.sf(wd.FindElement(selenium.ByXPATH, "//iframe"))
@@ -71,7 +71,7 @@ func s05(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d iframe.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d iframe.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return HasSuffix("Время на все работы ЦЭ").nse(wd.FindElement(selenium.ByTagName, "body"))
@@ -81,7 +81,7 @@ func s05(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Время на все работы ЦЭ.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Время на все работы ЦЭ.png", slide))
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//div[contains(@title,'Статистика по сотрудникам')]"))
@@ -91,7 +91,7 @@ func s05(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Статистика по сотрудникам.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Статистика по сотрудникам.png", slide))
 	}
 	err = cb(wd, "СЦ/ЦЭ", "СЦ г.Миллерово")
 	if err != nil {
@@ -99,7 +99,7 @@ func s05(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d СЦ г.Миллерово.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d СЦ г.Миллерово.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'Ср. производительность сотрудника')]"))
@@ -109,7 +109,7 @@ func s05(slide int) (ex int, err error) {
 		return
 	}
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d Ср. производительность сотрудника.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d Ср. производительность сотрудника.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNil(wd.FindElement(selenium.ByXPATH, "//*[@class='circle']"))
@@ -118,9 +118,13 @@ func s05(slide int) (ex int, err error) {
 		stdo.Println()
 		return
 	}
+
+	re := ssII(wd)
 	if debug == slide {
-		saveWd(wd, fmt.Sprintf("%02d.png", slide))
+		// ssII(wd).write(fmt.Sprintf("%02d.png", slide))
+		re.write(fmt.Sprintf("%02d.png", slide))
 	}
-	saveCropWd(wd, fmt.Sprintf("%02d.jpg", slide), image.Rect(10, 10, 1888, 818)) //x7 y7 x3 y3
+	// saveCropWX(wd, fmt.Sprintf("%02d.jpg", slide), image.Rect(10, 10, 1888, 818))
+	re.crop(image.Rect(10, 10, 1888, 818)).write(fmt.Sprintf("%02d.jpg", slide))
 	return
 }
