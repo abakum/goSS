@@ -63,6 +63,7 @@ func main() {
 	}
 	csWD = make(chan sWD, 10)
 	closer.Bind(func() {
+		debug = 2 //exit
 		var cmd *exec.Cmd
 		stdo.Println(service)
 		// service.Stop()
