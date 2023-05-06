@@ -11,43 +11,16 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
-	"reflect"
+	"runtime/debug"
 	"strings"
-	"syscall"
 	"time"
-	"unsafe"
 
 	"github.com/tebeka/selenium"
-	sl "github.com/tebeka/selenium/log"
 	"github.com/xlab/closer"
 )
 
-func wdQC(wd selenium.WebDriver, slide int) {
-	id := wd.SessionID()
-	if id == "" {
-		return
-	}
-	stdo.Printf("%02d wdQC %q\n", slide, id)
-	if debug > 0 {
-		for _, logType := range []sl.Type{sl.Server, sl.Performance} {
-			mess, err := wd.Log(sl.Type(logType))
-			if err == nil {
-				for _, mes := range mess {
-					left := len(mes.Message)
-					if logType == sl.Performance {
-						left = 64
-					}
-					stdo.Println(logType, mes.Timestamp, mes.Message[:left])
-				}
-			}
-		}
-	}
-	wd.Quit()
-	wd.Close() //for kill chromeDriver.exe
-}
-
 func weShow(we selenium.WebElement, err error) {
-	if err != nil || we == nil || debug < 1 {
+	if err != nil || we == nil || deb < 1 {
 		return
 	}
 	// stdo.Println(we.Location())
@@ -74,46 +47,6 @@ func getEmbed(wd selenium.WebDriver, url string) (err error) {
 	// _, err = wd.ExecuteScript(fmt.Sprintf("window.open(%q,%q)", url2, "_self"), nil)
 	return
 }
-
-var (
-	procSendMessage *syscall.Proc
-)
-
-func closeWindowWithTitle(title string) (err error) {
-	const WM_CLOSE = 16
-	user32, err = syscall.LoadDLL("user32.dll")
-	if err != nil {
-		return
-	}
-	defer user32.Release()
-	procEnumWindows, err = user32.FindProc("EnumWindows")
-	if err != nil {
-		return
-	}
-	procGetWindowTextW, err = user32.FindProc("GetWindowTextW")
-	if err != nil {
-		return
-	}
-	procSendMessage, err = user32.FindProc("SendMessageW")
-	if err != nil {
-		return
-	}
-	h, err := FindWindow(title)
-	if err != nil {
-		return
-	}
-	stdo.Println(h, err)
-	err = SendMessage(h, WM_CLOSE, 0, 0)
-	return
-}
-func SendMessage(hWnd syscall.Handle, msg uint32, wParam, lParam uintptr) (err error) {
-	r1, _, e1 := procSendMessage.Call(uintptr(hWnd), uintptr(msg), wParam, lParam)
-	if r1 != 0 {
-		err = e1
-	}
-	return
-}
-
 func sErr(s string, err error) string {
 	if err != nil {
 		return err.Error()
@@ -121,8 +54,8 @@ func sErr(s string, err error) string {
 	return s
 }
 func wdShow(wd selenium.WebDriver, slide int) {
-	stdo.Printf("%02d %q\n", slide, sErr(wd.Title()))
-	stdo.Printf("%02d %q\n", slide, sErr(url.QueryUnescape(sErr(wd.CurrentURL()))))
+	stdo.Printf("%s %02d %q\n", src(8), slide, sErr(wd.Title()))
+	stdo.Printf("%s %02d %q\n", src(8), slide, sErr(url.QueryUnescape(sErr(wd.CurrentURL()))))
 }
 
 // like path.Join but better
@@ -143,108 +76,98 @@ func i2p(v int) (fn string) {
 	return
 }
 
-func GetUnexportedField(field reflect.Value) interface{} {
-	return reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().Interface()
-}
-func SetUnexportedField(field reflect.Value, value interface{}) {
-	reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).
-		Elem().
-		Set(reflect.ValueOf(value))
-}
-
-func ex(slide int, err error) {
-	if err != nil {
-		exit = slide
-		stdo.Printf("%02d %q", slide, err)
-		closer.Close()
-	} else {
-		stdo.Printf("%02d Done", slide)
-	}
-}
-
 type ii struct {
 	img image.Image
 	err error
 }
 
-func ssII(wd any) (r *ii) {
+func ssII(wd any) (o *ii) { //Beginning of the pipe
 	var pngBytes []byte
-	r = &ii{}
+	o = &ii{err: nil}
 	if wd == nil {
-		stdo.Println("ssII")
-		r.err = fmt.Errorf("empty img")
+		o.err = fmt.Errorf("selenium.WebX is nil")
 		return
 	}
 	time.Sleep(time.Second)
 	switch wx := wd.(type) {
 	case selenium.WebDriver:
-		pngBytes, r.err = wx.Screenshot()
+		pngBytes, o.err = wx.Screenshot()
 	case selenium.WebElement:
-		pngBytes, r.err = wx.Screenshot(true)
+		pngBytes, o.err = wx.Screenshot(true)
 	default:
-		r.err = fmt.Errorf("not selenium.WebX")
+		o.err = fmt.Errorf("not selenium.WebX")
 	}
-	if r.err != nil {
-		stdo.Println("ssII")
+	if o.err != nil {
 		return
 	}
-	r.img, r.err = png.Decode(bytes.NewReader(pngBytes))
-	if r.err != nil {
-		stdo.Println("ssII")
-	}
+	o.img, o.err = png.Decode(bytes.NewReader(pngBytes))
 	return
 }
 
-func (i *ii) crop(crop image.Rectangle) (r *ii) {
-	r = i
+func (i *ii) crop(crop image.Rectangle) (o *ii) { //Middle of the pipe
+	o = &ii{err: i.err}
 	if i.err != nil {
 		return
 	}
-	// r = &ii{}
-	// r.img, r.err = cropImage(i.img, crop)
 	type subImager interface {
 		SubImage(ir image.Rectangle) image.Image
 	}
-	// img is an Image interface. This checks if the underlying value has a
+	// i.img is an Image interface. This checks if the underlying value has a
 	// method called SubImage. If it does, then we can use SubImage to crop the
 	// image.
 	sImg, ok := i.img.(subImager)
 	if !ok {
-		stdo.Println("crop")
-		r.err = fmt.Errorf("image does not support cropping")
+		o.img = i.img
+		o.err = fmt.Errorf("image does not support cropping")
 		return
 	}
-	r.img = sImg.SubImage(crop)
+	o.img = sImg.SubImage(crop)
 	return
 }
 
-func (i *ii) write(fileName string) (err error) {
+func (i *ii) write(fileName string) (err error) { //Pipe end
 	err = i.err
 	if err != nil {
 		return
 	}
 	fullName := s2p(root, doc, fileName)
-	if strings.HasSuffix(fileName, ".jpg") {
-		fullName = filepath.Join(root, fileName)
+	jpg := strings.HasSuffix(fileName, ".jpg")
+	if jpg {
+		fullName = s2p(root, fileName)
 	}
-	out, err := os.Create(fullName)
+	file, err := os.Create(fullName)
 	if err != nil {
-		stdo.Println("write")
 		return
 	}
-	defer out.Close()
-	if strings.HasSuffix(fileName, ".jpg") {
-		err = jpeg.Encode(out, i.img, &jpeg.Options{Quality: 100})
+	defer file.Close()
+	if jpg {
+		err = jpeg.Encode(file, i.img, &jpeg.Options{Quality: 100})
 	} else {
-		err = png.Encode(out, i.img)
+		err = png.Encode(file, i.img)
 	}
 	if err != nil {
-		stdo.Println("write")
 		return
 	}
-	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", pJPG).Run()
-	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", pJPG).Run()
-	// err = exec.Command("cmd", "/c", "start", "chrome", pJPG).Run()
+	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", fullName).Run()
+	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", fullName).Run()
+	// err = exec.Command("cmd", "/c", "start", "chrome", fullName).Run()
 	err = exec.Command(chromeBin, fullName).Run()
+	return
+}
+func er(slide int, err error) {
+	if err != nil {
+		exit = slide
+		stdo.Println(src(8), err.Error())
+		closer.Close()
+	}
+}
+func src(deep int) (s string) {
+	s = string(debug.Stack())
+	// for k, v := range strings.Split(s, "\n") {
+	// 	stdo.Println(k, v)
+	// }
+	s = strings.Split(s, "\n")[deep]
+	s = strings.Split(s, " +0x")[0]
+	_, s = path.Split(s)
 	return
 }

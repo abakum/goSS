@@ -6,24 +6,20 @@ import (
 	"os/exec"
 )
 
-func s09(slide int) (ex int, err error) {
-	ex = slide
-	if debug != 0 {
-		if debug == slide || -debug == slide || debug == -8 {
-		} else {
-			return
-		}
-	}
-	err = exec.Command("cmd", "/c", "start", s2p(cd, "imager.xlsb")).Run()
-	if err != nil {
-		stdo.Println()
+func s09(slide int) {
+	switch deb {
+	case 0, 8, -8, slide, -slide:
+	default:
 		return
 	}
+	err := exec.Command("cmd", "/c", "start", s2p(cd, "imager.xlsb")).Run()
+	er(slide, err)
 	for _, v := range []int{2, 7, 8, 9} {
-		if _, err = os.Stat(i2p(v)); errors.Is(err, os.ErrNotExist) {
-			stdo.Println()
+		_, err = os.Stat(i2p(v))
+		if errors.Is(err, os.ErrNotExist) {
+			er(slide, err)
 			return
 		}
 	}
-	return
+	stdo.Printf("%02d Done", slide)
 }

@@ -9,6 +9,7 @@ import (
 
 type SendKeys string
 
+// done when err contains no such element
 func nse(done bool, err error) (bool, error) {
 	const noSuchElement = "no such element"
 	if err == nil {
@@ -20,12 +21,16 @@ func nse(done bool, err error) (bool, error) {
 	// stdo.Println(err)
 	return false, err
 }
+
+// done when we not found
 func weNil(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(true, err)
 	}
 	return we == nil, err
 }
+
+// done when we found move and click
 func weMC(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -45,6 +50,8 @@ func weMC(we selenium.WebElement, err error) (bool, error) {
 	weShow(we, err)
 	return true, err
 }
+
+// done when we found move click and send key
 func (s SendKeys) mc(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -68,6 +75,7 @@ func (s SendKeys) mc(we selenium.WebElement, err error) (bool, error) {
 	return true, err
 }
 
+// done when we found
 func weNSE(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -77,6 +85,7 @@ func weNSE(we selenium.WebElement, err error) (bool, error) {
 
 type WebDriver []selenium.WebDriver
 
+// done when we found and switch frame
 func (w WebDriver) sf(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -91,6 +100,7 @@ func (w WebDriver) sf(we selenium.WebElement, err error) (bool, error) {
 	return true, err
 }
 
+// done when we found and send key
 func (s SendKeys) nse(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -105,6 +115,7 @@ func (s SendKeys) nse(we selenium.WebElement, err error) (bool, error) {
 	return true, err
 }
 
+// done when we found displayed move and click
 func wesDMEC(wes []selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -132,6 +143,8 @@ func wesDMEC(wes []selenium.WebElement, err error) (bool, error) {
 	}
 	return false, err
 }
+
+// done when we found displayed move click and send keys
 func (s SendKeys) dmec(wes []selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -166,6 +179,7 @@ func (s SendKeys) dmec(wes []selenium.WebElement, err error) (bool, error) {
 
 type HasSuffix string
 
+// done when we found and text has suffix
 func (s HasSuffix) nse(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)
@@ -179,6 +193,7 @@ func (s HasSuffix) nse(we selenium.WebElement, err error) (bool, error) {
 
 type Contains string
 
+// done when we found and text contains
 func (s Contains) nse(we selenium.WebElement, err error) (bool, error) {
 	if err != nil {
 		return nse(false, err)

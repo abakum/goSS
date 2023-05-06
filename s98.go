@@ -8,15 +8,13 @@ import (
 	tu "github.com/mymmrac/telego/telegoutil"
 )
 
-func s98(slide int) (ex int, err error) {
-	ex = slide
+func s98(slide int) {
 	wg.Add(1)
 	defer wg.Done()
-	if debug != 0 {
-		if debug == slide || -debug == slide {
-		} else {
-			return
-		}
+	switch deb {
+	case 0, slide, -slide:
+	default:
+		return
 	}
 	var (
 		bot         *telego.Bot
@@ -26,23 +24,21 @@ func s98(slide int) (ex int, err error) {
 		messages    []telego.Message
 	)
 	inds := []int{1, 4, 5, 8, 12, 13, 97}
+	var err error
 	for _, v := range inds {
 		if _, err = os.Stat(i2p(v)); errors.Is(err, os.ErrNotExist) {
-			stdo.Println()
+			er(slide, err)
 			return
 		}
 	}
 	bot, err = telego.NewBot(token, telego.WithDefaultDebugLogger())
-	if err != nil {
-		stdo.Println()
-		return
-	}
+	er(slide, err)
 	defer bot.Close()
 	medias = []telego.InputMedia{}
 	for _, v := range inds {
 		file, err = os.Open(i2p(v))
 		if err != nil {
-			stdo.Println()
+			er(slide, err)
 			return
 		}
 		defer file.Close()
@@ -55,7 +51,7 @@ func s98(slide int) (ex int, err error) {
 			medias = append(medias, tu.MediaPhoto(tu.File(file)))
 		}
 	}
-	messages, err = bot.SendMediaGroup(tu.MediaGroup(tu.ID(chat)).WithMedia(medias...))
+	messages, _ = bot.SendMediaGroup(tu.MediaGroup(tu.ID(chat)).WithMedia(medias...))
 	if len(messages) != len(medias) {
 		for _, v := range messages {
 			bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: tu.ID(chat), MessageID: v.MessageID})
@@ -74,9 +70,6 @@ func s98(slide int) (ex int, err error) {
 		conf.Ids = append(conf.Ids, v.MessageID)
 	}
 	err = conf.saver()
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	return
+	er(slide, err)
+	stdo.Printf("%02d Done", slide)
 }

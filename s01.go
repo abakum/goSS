@@ -2,21 +2,20 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 	sl "github.com/tebeka/selenium/log"
 )
 
-func s01(slide int) (ex int, err error) {
-	ex = slide
+func s01(slide int) {
 	wg.Add(1)
 	defer wg.Done()
-	if debug != 0 {
-		if debug == slide || -debug == slide {
-		} else {
-			return
-		}
+	switch deb {
+	case 0, slide, -slide:
+	default:
+		return
 	}
 	var (
 		url = conf.R01
@@ -35,7 +34,7 @@ func s01(slide int) (ex int, err error) {
 		},
 		Prefs: map[string]interface{}{},
 	}
-	if debug == slide {
+	if deb == slide {
 		// selenium.SetDebug(true)
 		sCaps.SetLogLevel(sl.Server, sl.All) //sl "github.com/tebeka/selenium/log"
 		// sCaps.SetLogLevel(sl.Performance, sl.All)
@@ -54,29 +53,19 @@ func s01(slide int) (ex int, err error) {
 	}
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	csWD <- wd
-	if debug != slide {
+	er(slide, err)
+	if deb != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
 	err = wd.Get(url)
-	if err != nil {
-		stdo.Println()
-		return
-	}
+	er(slide, err)
+	time.Sleep(time.Second)
 	wdShow(wd, slide)
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		we, err = wd.FindElement(selenium.ByXPATH, "//table[contains(@class,'weather')]")
 		return weNSE(we, err)
 	})
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	// zr.crop(we, fmt.Sprintf("%02d.jpg", slide))
+	er(slide, err)
 	ssII(we).write(fmt.Sprintf("%02d.jpg", slide))
-	return
+	stdo.Printf("%02d Done", slide)
 }

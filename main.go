@@ -13,8 +13,6 @@ import (
 	"github.com/xlab/closer"
 )
 
-type sWD selenium.WebDriver
-
 const (
 	root             = "s:"
 	doc              = "doc"
@@ -22,18 +20,19 @@ const (
 	mov              = "abaku.mp4"
 	port             = 7777
 	seleniumPath     = "selenium-server.jar"
+	taskKill         = "taskkill.exe"
+	java             = "java.exe"
 	chromeDriverPath = "chromedriver.exe"
 	chromeBin        = `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`
 	userDataDir      = `Google\Chrome\User Data\Default`
 )
 
 var (
-	debug int
-	stdo  *log.Logger
-	wg    sync.WaitGroup
-	cd    string
-	csWD  chan sWD
-	exit  int
+	deb  int
+	stdo *log.Logger
+	wg   sync.WaitGroup
+	cd   string
+	exit int
 )
 
 func main() {
@@ -46,12 +45,15 @@ func main() {
 		return
 	}
 	stdo.Println(cd)
-	debug = 0
-	if len(os.Args) > 1 {
-		debug, err = strconv.Atoi(os.Args[1])
-		if err != nil {
-			debug = 0
+	slides := []int{}
+	for _, s := range os.Args[1:] {
+		i, err := strconv.Atoi(s)
+		if err == nil {
+			slides = append(slides, i)
 		}
+	}
+	if len(slides) == 0 {
+		slides = append(slides, 0)
 	}
 	opts := []selenium.ServiceOption{
 		selenium.ChromeDriver(s2p(cd, chromeDriverPath)),
@@ -61,30 +63,17 @@ func main() {
 		stdo.Println(err)
 		return
 	}
-	csWD = make(chan sWD, 10)
 	closer.Bind(func() {
-		debug = 2 //exit
+		deb = 2 //exit
 		var cmd *exec.Cmd
 		stdo.Println(service)
-		// service.Stop()
-		// kill := false
-		// for len(csWD) > 0 {
-		// 	wd := <-csWD
-		// 	// stdo.Println(wd)
-		// 	// wdQC(wd, 0)
-		// 	if wd.SessionID() != "" {
-		// 		kill = true
-		// 	}
-		// }
-		// if kill {
-		cmd = exec.Command("taskkill.exe", "/F", "/IM", "java.exe", "/T")
+		cmd = exec.Command(taskKill, "/F", "/IM", java, "/T")
 		stdo.Println(cmd.Path, strings.Join(cmd.Args[1:], " "))
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Run()
-		// }
 		time.Sleep(time.Second)
-		cmd = exec.Command("taskkill.exe", "/F", "/IM", chromeDriverPath, "/T")
+		cmd = exec.Command(taskKill, "/F", "/IM", chromeDriverPath, "/T")
 		stdo.Println(cmd.Path, strings.Join(cmd.Args[1:], " "))
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
@@ -95,39 +84,42 @@ func main() {
 	conf, err = loader(s2p(cd, goSSjson))
 	if err != nil {
 		conf.saver()
-		stdo.Println()
+		er(deb, err)
 		return
 	}
-	go func() {
-		ex(s01(1))
-	}()
-	go func() {
-		ex(s04(4))
-	}()
-	go func() {
-		ex(s05(5))
-	}()
-	go func() {
-		ex(s08(8))
-		ex(s09(9))
-	}()
-	go func() {
-		ex(s12(12))
-	}()
-	go func() {
-		ex(s13(13))
-	}()
-	if debug < 97 {
-		time.Sleep(time.Second) //for wg.Add
+	for _, de := range slides {
+		deb = de
+		go func() {
+			s01(1)
+		}()
+		go func() {
+			s04(4)
+		}()
+		go func() {
+			s05(5)
+		}()
+		go func() {
+			s08(8)
+			s09(9)
+		}()
+		go func() {
+			s12(12)
+		}()
+		go func() {
+			s13(13)
+		}()
+		if deb < 97 {
+			time.Sleep(time.Second) //for wg.Add
+		}
+		wg.Wait()
+		s97(97) //bat
+		go func() {
+			s98(98) //telegram
+		}()
+		if deb == 98 {
+			time.Sleep(time.Second) //for wg.Add
+		}
+		wg.Wait()
+		s99(99) //ss
 	}
-	wg.Wait()
-	ex(s97(97)) //bat
-	go func() {
-		ex(s98(98)) //telegram
-	}()
-	if debug == 98 {
-		time.Sleep(time.Second) //for wg.Add
-	}
-	wg.Wait()
-	ex(s99(99)) //ss
 }

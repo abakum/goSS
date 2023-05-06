@@ -5,21 +5,15 @@ import (
 	"os/exec"
 )
 
-func s97(slide int) (ex int, err error) {
-	ex = slide
-	if debug != 0 {
-		if debug == slide || -debug == slide {
-		} else {
-			return
-		}
+func s97(slide int) {
+	switch deb {
+	case 0, slide, -slide:
+	default:
+		return
 	}
 	cmd := exec.Command("cmd", "/c", s2p(root, bat))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		stdo.Println()
-		return
-	}
-	return
+	er(slide, cmd.Run())
+	stdo.Printf("%02d Done", slide)
 }
