@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 func s97(slide int) {
@@ -11,9 +12,9 @@ func s97(slide int) {
 	default:
 		return
 	}
-	cmd := exec.Command("cmd", "/c", s2p(root, bat))
+	cmd := exec.Command("cmd", "/c", filepath.Join(root, bat))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	er(slide, cmd.Run())
+	ex(slide, cmd.Run())
 	stdo.Printf("%02d Done", slide)
 }

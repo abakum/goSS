@@ -25,18 +25,13 @@ func weShow(we selenium.WebElement, err error) {
 	}
 	// stdo.Println(we.Location())
 	// stdo.Println(we.Size())
-	oh, oerr := we.GetAttribute("outerHTML")
-	if oerr != nil {
-		stdo.Println(we)
-		return
-	}
+	oh := sErr(we.GetAttribute("outerHTML"))
 	pwe, perr := we.FindElement(selenium.ByXPATH, "..")
 	if perr != nil {
-		stdo.Println(oh)
+		stdo.Println(src(8), oh)
 		return
 	}
-	poh, _ := pwe.GetAttribute("outerHTML")
-	stdo.Println(strings.Replace(poh, oh, "▶"+oh+"◀", 1))
+	stdo.Println(src(8), strings.Replace(sErr(pwe.GetAttribute("outerHTML")), oh, "▶"+oh+"◀", 1))
 }
 func getEmbed(wd selenium.WebDriver, url string) (err error) {
 	err = wd.Get(url)
@@ -58,21 +53,12 @@ func wdShow(wd selenium.WebDriver, slide int) {
 	stdo.Printf("%s %02d %q\n", src(8), slide, sErr(url.QueryUnescape(sErr(wd.CurrentURL()))))
 }
 
-// like path.Join but better
-func s2p(s ...string) string {
-	ss := []string{}
-	for _, v := range s {
-		ss = append(ss, filepath.SplitList(strings.Trim(v, `\/`))...)
-	}
-	return filepath.FromSlash(path.Join(ss...))
-}
-
 func i2p(v int) (fn string) {
 	fn = fmt.Sprintf("%02d.jpg", v)
 	if v == 97 {
 		fn = mov
 	}
-	fn = s2p(root, fn)
+	fn = filepath.Join(root, fn)
 	return
 }
 
@@ -130,10 +116,10 @@ func (i *ii) write(fileName string) (err error) { //Pipe end
 	if err != nil {
 		return
 	}
-	fullName := s2p(root, doc, fileName)
+	fullName := filepath.Join(root, doc, fileName)
 	jpg := strings.HasSuffix(fileName, ".jpg")
 	if jpg {
-		fullName = s2p(root, fileName)
+		fullName = filepath.Join(root, fileName)
 	}
 	file, err := os.Create(fullName)
 	if err != nil {
@@ -154,7 +140,7 @@ func (i *ii) write(fileName string) (err error) { //Pipe end
 	err = exec.Command(chromeBin, fullName).Run()
 	return
 }
-func er(slide int, err error) {
+func ex(slide int, err error) {
 	if err != nil {
 		exit = slide
 		stdo.Println(src(8), err.Error())

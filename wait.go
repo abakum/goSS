@@ -187,7 +187,10 @@ func (s HasSuffix) nse(we selenium.WebElement, err error) (bool, error) {
 	if we == nil {
 		return false, nil
 	}
-	Text, _ := we.Text()
+	Text := sErr(we.Text())
+	if deb > 0 {
+		stdo.Printf("%s %q", src(8), Text)
+	}
 	return strings.HasSuffix(Text, string(s)), err
 }
 
@@ -201,6 +204,9 @@ func (s Contains) nse(we selenium.WebElement, err error) (bool, error) {
 	if we == nil {
 		return false, nil
 	}
-	Text, _ := we.Text()
+	Text := sErr(we.Text())
+	if deb > 0 {
+		stdo.Printf("%s %q", src(8), Text)
+	}
 	return strings.Contains(Text, string(s)), err
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/tebeka/selenium"
@@ -10,17 +11,18 @@ import (
 )
 
 func s01(slide int) {
-	wg.Add(1)
-	defer wg.Done()
 	switch deb {
 	case 0, slide, -slide:
 	default:
 		return
 	}
+	wg.Add(1)
+	defer wg.Done()
 	var (
-		url = conf.R01
-		we  selenium.WebElement
+		we     selenium.WebElement
+		params = conf.P[strconv.Itoa(slide)]
 	)
+	stdo.Println(params)
 	sCaps := selenium.Capabilities{
 		"browserName":      "chrome",
 		"pageLoadStrategy": "eager",
@@ -53,19 +55,19 @@ func s01(slide int) {
 	}
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
-	er(slide, err)
+	ex(slide, err)
 	if deb != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
-	err = wd.Get(url)
-	er(slide, err)
+	err = wd.Get(params[0])
+	ex(slide, err)
 	time.Sleep(time.Second)
 	wdShow(wd, slide)
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		we, err = wd.FindElement(selenium.ByXPATH, "//table[contains(@class,'weather')]")
 		return weNSE(we, err)
 	})
-	er(slide, err)
+	ex(slide, err)
 	ssII(we).write(fmt.Sprintf("%02d.jpg", slide))
 	stdo.Printf("%02d Done", slide)
 }

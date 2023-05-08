@@ -3,42 +3,47 @@ package main
 import (
 	"errors"
 	"os"
+	"strconv"
 
 	"github.com/mymmrac/telego"
 	tu "github.com/mymmrac/telego/telegoutil"
 )
 
 func s98(slide int) {
-	wg.Add(1)
-	defer wg.Done()
 	switch deb {
 	case 0, slide, -slide:
 	default:
 		return
 	}
+	wg.Add(1)
+	defer wg.Done()
 	var (
-		bot         *telego.Bot
-		token, chat = conf.R98.read()
-		file        *os.File
-		medias      []telego.InputMedia
-		messages    []telego.Message
+		bot      *telego.Bot
+		file     *os.File
+		medias   []telego.InputMedia
+		messages []telego.Message
+		err      error
+		inds     = []int{1, 4, 5, 8, 12, 13, 97}
+		params   = conf.P[strconv.Itoa(slide)]
 	)
-	inds := []int{1, 4, 5, 8, 12, 13, 97}
-	var err error
+	stdo.Println(params)
+	i, err := strconv.ParseInt(params[1], 10, 64)
+	ex(slide, err)
+	chat := tu.ID(i)
 	for _, v := range inds {
 		if _, err = os.Stat(i2p(v)); errors.Is(err, os.ErrNotExist) {
-			er(slide, err)
+			ex(slide, err)
 			return
 		}
 	}
-	bot, err = telego.NewBot(token, telego.WithDefaultDebugLogger())
-	er(slide, err)
+	bot, err = telego.NewBot(params[0], telego.WithDefaultDebugLogger())
+	ex(slide, err)
 	defer bot.Close()
 	medias = []telego.InputMedia{}
 	for _, v := range inds {
 		file, err = os.Open(i2p(v))
 		if err != nil {
-			er(slide, err)
+			ex(slide, err)
 			return
 		}
 		defer file.Close()
@@ -51,10 +56,10 @@ func s98(slide int) {
 			medias = append(medias, tu.MediaPhoto(tu.File(file)))
 		}
 	}
-	messages, _ = bot.SendMediaGroup(tu.MediaGroup(tu.ID(chat)).WithMedia(medias...))
+	messages, _ = bot.SendMediaGroup(tu.MediaGroup(chat).WithMedia(medias...))
 	if len(messages) != len(medias) {
 		for _, v := range messages {
-			bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: tu.ID(chat), MessageID: v.MessageID})
+			bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: chat, MessageID: v.MessageID})
 		}
 		stdo.Println()
 		return
@@ -63,13 +68,13 @@ func s98(slide int) {
 		if v == 0 {
 			continue
 		}
-		bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: tu.ID(chat), MessageID: v})
+		bot.DeleteMessage(&telego.DeleteMessageParams{ChatID: chat, MessageID: v})
 	}
 	conf.Ids = []int{}
 	for _, v := range messages {
 		conf.Ids = append(conf.Ids, v.MessageID)
 	}
 	err = conf.saver()
-	er(slide, err)
+	ex(slide, err)
 	stdo.Printf("%02d Done", slide)
 }

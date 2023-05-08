@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,7 +15,6 @@ import (
 )
 
 const (
-	root             = "s:"
 	doc              = "doc"
 	bat              = "abaku.bat"
 	mov              = "abaku.mp4"
@@ -31,7 +31,8 @@ var (
 	deb  int
 	stdo *log.Logger
 	wg   sync.WaitGroup
-	cd   string
+	cd   string // s:\bin
+	root string // s:
 	exit int
 )
 
@@ -40,11 +41,9 @@ func main() {
 	defer closer.Close()
 	stdo = log.New(os.Stdout, "", log.Lshortfile|log.Ltime)
 	cd, err = os.Getwd()
-	if err != nil {
-		stdo.Println(err)
-		return
-	}
+	ex(2, err)
 	stdo.Println(cd)
+	root = filepath.Dir(cd)
 	slides := []int{}
 	for _, s := range os.Args[1:] {
 		i, err := strconv.Atoi(s)
@@ -56,13 +55,10 @@ func main() {
 		slides = append(slides, 0)
 	}
 	opts := []selenium.ServiceOption{
-		selenium.ChromeDriver(s2p(cd, chromeDriverPath)),
+		selenium.ChromeDriver(filepath.Join(cd, chromeDriverPath)),
 	}
-	service, err := selenium.NewSeleniumService(s2p(cd, seleniumPath), port, opts...)
-	if err != nil {
-		stdo.Println(err)
-		return
-	}
+	service, err := selenium.NewSeleniumService(filepath.Join(cd, seleniumPath), port, opts...)
+	ex(2, err)
 	closer.Bind(func() {
 		deb = 2 //exit
 		var cmd *exec.Cmd
@@ -81,10 +77,12 @@ func main() {
 		stdo.Println("main Done", exit)
 		os.Exit(exit)
 	})
-	conf, err = loader(s2p(cd, goSSjson))
+	conf, err = loader(filepath.Join(cd, goSSjson))
 	if err != nil {
-		conf.saver()
-		er(deb, err)
+		conf.P = map[string][]string{}
+		conf.Ids = []int{}
+		// conf.saver()
+		ex(2, err)
 		return
 	}
 	for _, de := range slides {

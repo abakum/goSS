@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image"
+	"strconv"
 	"time"
 
 	"github.com/tebeka/selenium"
@@ -11,16 +12,18 @@ import (
 )
 
 func s05(slide int) {
-	wg.Add(1)
-	defer wg.Done()
 	switch deb {
 	case 0, slide, -slide:
 	default:
 		return
 	}
+	wg.Add(1)
+	defer wg.Done()
 	var (
-		url = conf.R05
+		params = conf.P[strconv.Itoa(slide)]
+		sc     = conf.P["4"][1]
 	)
+	stdo.Println(params, sc)
 	sCaps := selenium.Capabilities{
 		"browserName": "chrome",
 	}
@@ -44,12 +47,12 @@ func s05(slide int) {
 	}
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
-	er(slide, err)
+	ex(slide, err)
 	if deb != slide {
 		wd.ResizeWindow("", 1920, 1080)
 	}
-	err = getEmbed(wd, url)
-	er(slide, err)
+	err = getEmbed(wd, params[0])
+	ex(slide, err)
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d get.png", slide))
 	} else {
@@ -59,45 +62,49 @@ func s05(slide int) {
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return WebDriver{wd}.sf(wd.FindElement(selenium.ByXPATH, "//iframe"))
 	})
-	er(slide, err)
+	ex(slide, err)
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d iframe.png", slide))
 	}
-	if deb != slide {
+	if false {
 		err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 			return HasSuffix("Время на все работы ЦЭ").nse(wd.FindElement(selenium.ByTagName, "body"))
 		}, time.Minute*3)
-		er(slide, err)
+		ex(slide, err)
+	} else {
+		wd.Wait(func(wd selenium.WebDriver) (bool, error) {
+			return Contains("Статистика по сотрудникам").nse(wd.FindElement(selenium.ByTagName, "body"))
+		})
 	}
-	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
+	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//div[contains(@title,'Статистика по сотрудникам')]"))
-	})
-	er(slide, err)
+	}, time.Minute*3)
+	ex(slide, err)
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d Статистика по сотрудникам.png", slide))
 	}
-	err = cb(wd, "СЦ/ЦЭ", "СЦ г.Миллерово")
-	er(slide, err)
+	err = cb(wd, "СЦ/ЦЭ", sc)
+	ex(slide, err)
 	if deb == slide {
-		ssII(wd).write(fmt.Sprintf("%02d СЦ г.Миллерово.png", slide))
+		ssII(wd).write(fmt.Sprintf("%02d %s.png", slide, sc))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'Ср. производительность сотрудника')]"))
 	}, time.Minute*3)
-	er(slide, err)
+	ex(slide, err)
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d Ср. производительность сотрудника.png", slide))
 	}
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNil(wd.FindElement(selenium.ByXPATH, "//*[@class='circle']"))
 	}, time.Minute*3)
-	er(slide, err)
+	ex(slide, err)
 	we, err := wd.FindElement(selenium.ByXPATH, "//div[@class='innerContainer']")
-	er(slide, err)
+	ex(slide, err)
 	wl, err := we.Location()
-	er(slide, err)
+	ex(slide, err)
 	ws, err := we.Size()
-	er(slide, err)
+	ex(slide, err)
 	re := ssII(wd)
 	if deb == slide {
 		// ssII(wd).write(fmt.Sprintf("%02d.png", slide))

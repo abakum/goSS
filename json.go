@@ -9,35 +9,9 @@ const (
 	goSSjson = "goSS.json"
 )
 
-type uup struct {
-	Url,
-	User,
-	Pass string
-}
-
-func (u uup) read() (string, string, string) {
-	return u.Url, u.User, u.Pass
-}
-
-type tc struct {
-	Token string
-	Chat  int64
-}
-
-func (t tc) read() (string, int64) {
-	return t.Token, t.Chat
-}
-
 type config struct {
 	fn  string
-	R01 string
-	R04 string
-	R05 string
-	R08 uup
-	R12 string
-	R13 string
-	R98 tc
-	R99 uup
+	P   map[string][]string
 	Ids []int
 }
 
