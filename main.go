@@ -34,6 +34,8 @@ var (
 	cd   string // s:\bin
 	root string // s:
 	exit int
+	sc   string
+	rf   string
 )
 
 func main() {
@@ -81,10 +83,12 @@ func main() {
 	if err != nil {
 		conf.P = map[string][]string{}
 		conf.Ids = []int{}
-		// conf.saver()
+		conf.saver()
 		ex(2, err)
 		return
 	}
+	sc = conf.P["4"][1]
+	rf = conf.P["12"][2]
 	for _, de := range slides {
 		deb = de
 		go func() {

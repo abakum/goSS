@@ -20,8 +20,6 @@ func s13(slide int) {
 	defer wg.Done()
 	var (
 		params = conf.P[strconv.Itoa(slide)]
-		sc     = conf.P["4"][1]
-		rf     = conf.P["12"][2]
 	)
 	stdo.Println(params, sc, rf)
 	sCaps := selenium.Capabilities{
@@ -66,16 +64,6 @@ func s13(slide int) {
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d iframe.png", slide))
 	}
-	// if false {
-	// 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
-	// 		return HasSuffix("Общая информация").nse(wd.FindElement(selenium.ByTagName, "body"))
-	// 	}, time.Minute*3)
-	// 	ex(slide, err)
-	// } else {
-	wd.Wait(func(wd selenium.WebDriver) (bool, error) {
-		return Contains("Все").nse(wd.FindElement(selenium.ByTagName, "body"))
-	})
-	// }
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//div[.='Все']"))
 	})

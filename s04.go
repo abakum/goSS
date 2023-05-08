@@ -64,16 +64,6 @@ func s04(slide int) {
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d iframe.png", slide))
 	}
-	// if false {
-	// 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
-	// 		return HasSuffix("Целевые значения").nse(wd.FindElement(selenium.ByTagName, "body"))
-	// 	})
-	// 	ex(slide, err)
-	// } else {
-	wd.Wait(func(wd selenium.WebDriver) (bool, error) {
-		return Contains("Главная").nse(wd.FindElement(selenium.ByTagName, "body"))
-	})
-	// }
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//div[contains(@title,'Главная')]"))
 	}, time.Minute*3)
