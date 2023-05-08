@@ -135,10 +135,6 @@ func s08(slide int) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'ОК')]"))
 	})
 	ex(slide, err)
-	// err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
-	// 	return weMC(wd.FindElement(selenium.ByXPATH, "//span[contains(.,'Отображение фильтра')]"))
-	// })
-	// ex(slide, err)
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//button[@id='report_actions_form-export_report_data']/span"))
 	}, time.Minute*3)

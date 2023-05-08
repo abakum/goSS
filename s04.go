@@ -64,16 +64,16 @@ func s04(slide int) {
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d iframe.png", slide))
 	}
-	if false {
-		err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
-			return HasSuffix("Целевые значения").nse(wd.FindElement(selenium.ByTagName, "body"))
-		})
-		ex(slide, err)
-	} else {
-		wd.Wait(func(wd selenium.WebDriver) (bool, error) {
-			return Contains("Главная").nse(wd.FindElement(selenium.ByTagName, "body"))
-		})
-	}
+	// if false {
+	// 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
+	// 		return HasSuffix("Целевые значения").nse(wd.FindElement(selenium.ByTagName, "body"))
+	// 	})
+	// 	ex(slide, err)
+	// } else {
+	wd.Wait(func(wd selenium.WebDriver) (bool, error) {
+		return Contains("Главная").nse(wd.FindElement(selenium.ByTagName, "body"))
+	})
+	// }
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weNSE(wd.FindElement(selenium.ByXPATH, "//div[contains(@title,'Главная')]"))
 	}, time.Minute*3)
@@ -95,17 +95,6 @@ func s04(slide int) {
 	if deb == slide {
 		ssII(wd).write(fmt.Sprintf("%02d circle.png", slide))
 	}
-	// err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
-	// 	return weNil(wd.FindElement(selenium.ByXPATH, fmt.Sprintf("//*[contains(text(),'%s')]", params[2])))
-	// }, time.Minute*3)
-	// ex(slide, err)
-	// if deb == slide {
-	// 	ssII(wd).write(fmt.Sprintf("%02d %s.png", slide, params[2]))
-	// }
-	// err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
-	// 	return weNil(wd.FindElement(selenium.ByXPATH, "//*[contains(text(),'УРЛ')]"))
-	// }, time.Minute*3)
-	// ex(slide, err)
 	we, err := wd.FindElement(selenium.ByXPATH, "//div[@class='visualContainerHost']")
 	ex(slide, err)
 	// ssII(wd).crop(image.Rect(0, 0, 1706, 812)).write(fmt.Sprintf("%02d.jpg", slide))
