@@ -137,7 +137,7 @@ func s08(slide int) {
 	ex(slide, err)
 	err = wd.WaitWithTimeout(func(wd selenium.WebDriver) (bool, error) {
 		return weMC(wd.FindElement(selenium.ByXPATH, "//button[@id='report_actions_form-export_report_data']/span"))
-	}, time.Minute*3)
+	}, time.Minute*4)
 	ex(slide, err)
 	os.Remove(TaskClosed)
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {

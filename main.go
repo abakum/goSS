@@ -91,29 +91,20 @@ func main() {
 	rf = conf.P["12"][2]
 	for _, de := range slides {
 		deb = de
-		go func() {
-			s01(1)
-		}()
-		go func() {
-			s04(4)
-		}()
-		go func() {
-			s05(5)
-		}()
+		go s01(1)
+		go s04(4)
+		go s05(5)
 		go func() {
 			s08(8)
 			s09(9)
 		}()
-		go func() {
-			s12(12)
-		}()
-		go func() {
-			s13(13)
-		}()
+		go s12(12)
+		go s13(13)
 		if deb < 97 {
 			time.Sleep(time.Second) //for wg.Add
 		}
 		wg.Wait()
+		// closer.Close() //do not publicate
 		s97(97) //bat
 		go func() {
 			s98(98) //telegram
