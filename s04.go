@@ -34,19 +34,20 @@ func s04(slide int) {
 	if deb == slide {
 		// selenium.SetDebug(true)
 		sCaps.SetLogLevel(sl.Server, sl.All) //sl "github.com/tebeka/selenium/log"
-		cCaps.Args = append(cCaps.Args,
-			"start-maximized",
-		)
+		// cCaps.Args = append(cCaps.Args,
+		// 	"start-maximized",
+		// )
 	} else {
 		cCaps.Args = append(cCaps.Args,
-			"kiosk",
-			"headless",
+			"headless=new",
 		)
 	}
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	ex(slide, err)
-	if deb != slide {
+	if deb == slide {
+		wd.MaximizeWindow("")
+	} else {
 		wd.ResizeWindow("", 1920, 1080)
 	}
 	err = getEmbed(wd, params[0])
@@ -99,6 +100,8 @@ func cb(wd selenium.WebDriver, key, value string) (err error) {
 	ex(deb, err)
 	if deb > 0 {
 		ssII(wd).write(fmt.Sprintf("%02d cb Click div.png", deb))
+	} else {
+		time.Sleep(time.Second)
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return SendKeys(value).dmec(wd.FindElements(selenium.ByXPATH, "//input[contains(@placeholder,'Поиск')]"))
@@ -106,6 +109,8 @@ func cb(wd selenium.WebDriver, key, value string) (err error) {
 	ex(deb, err)
 	if deb > 0 {
 		ssII(wd).write(fmt.Sprintf("%02d cb SendKeys.png", deb))
+	} else {
+		time.Sleep(time.Second)
 	}
 	err = wd.Wait(func(wd selenium.WebDriver) (bool, error) {
 		return wesDMEC(wd.FindElements(selenium.ByXPATH, fmt.Sprintf("//span[contains(text(),'%s')]", value)))
@@ -113,6 +118,8 @@ func cb(wd selenium.WebDriver, key, value string) (err error) {
 	ex(deb, err)
 	if deb > 0 {
 		ssII(wd).write(fmt.Sprintf("%02d cb Click span.png", deb))
+	} else {
+		time.Sleep(time.Second)
 	}
 	wd.KeyDown(selenium.TabKey)
 	return

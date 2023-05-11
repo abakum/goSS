@@ -42,19 +42,17 @@ func s08(slide int) {
 	if deb == slide {
 		// selenium.SetDebug(true)
 		sCaps.SetLogLevel(sl.Server, sl.All) //sl "github.com/tebeka/selenium/log"
-		cCaps.Args = append(cCaps.Args,
-			"start-maximized",
-		)
 	} else {
 		cCaps.Args = append(cCaps.Args,
-			"kiosk",
 			"headless=new",
 		)
 	}
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	ex(slide, err)
-	if deb != slide {
+	if deb == slide {
+		wd.MaximizeWindow("")
+	} else {
 		wd.ResizeWindow("", 1920, 1080)
 	}
 	err = wd.Get(params[0])

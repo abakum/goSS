@@ -134,10 +134,10 @@ func (i *ii) write(fileName string) (err error) { //Pipe end
 	if err != nil {
 		return
 	}
-	// err = exec.Command("rundll32", "url.dll,FileProtocolHandler", fullName).Run()
+	err = exec.Command("rundll32", "url.dll,FileProtocolHandler", fullName).Run()
 	// err = exec.Command("powershell", "Start-Process", "chrome", "-argumentlist", fullName).Run()
 	// err = exec.Command("cmd", "/c", "start", "chrome", fullName).Run()
-	err = exec.Command(chromeBin, fullName).Run()
+	// err = exec.Command(chromeBin, fullName).Run()
 	return
 }
 func ex(slide int, err error) {

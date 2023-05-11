@@ -43,20 +43,21 @@ func s01(slide int) {
 		// sCaps.SetLogLevel(sl.Browser, sl.Info) //not for chrome
 		// sCaps.SetLogLevel(sl.Client, sl.Info)  //not for chrome
 		// sCaps.SetLogLevel(sl.Driver, sl.Info)  //not for chrome
-		cCaps.Args = append(cCaps.Args,
-			"start-maximized",
-		)
+		// cCaps.Args = append(cCaps.Args,
+		// 	"start-maximized",
+		// )
 	} else {
 		cCaps.Args = append(cCaps.Args,
-			// "start-fullscreen",
-			"kiosk",
-			"headless",
+			// "kiosk",
+			"headless=new",
 		)
 	}
 	sCaps.AddChrome(cCaps)
 	wd, err := selenium.NewRemote(sCaps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
 	ex(slide, err)
-	if deb != slide {
+	if deb == slide {
+		wd.MaximizeWindow("")
+	} else {
 		wd.ResizeWindow("", 1920, 1080)
 	}
 	err = wd.Get(params[0])
